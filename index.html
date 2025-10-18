@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dialogue Builder 🎭</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Floating circles animation */
+  .bg-circles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 20s infinite ease-in-out;
+  }
+
+  .circle:nth-child(1) {
+    width: 80px;
+    height: 80px;
+    left: 10%;
+    animation-duration: 25s;
+  }
+
+  .circle:nth-child(2) {
+    width: 120px;
+    height: 120px;
+    right: 15%;
+    top: 20%;
+    animation-duration: 30s;
+    animation-delay: 2s;
+  }
+
+  .circle:nth-child(3) {
+    width: 60px;
+    height: 60px;
+    left: 50%;
+    top: 60%;
+    animation-duration: 20s;
+    animation-delay: 4s;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.3;
+    }
+    25% {
+      transform: translateY(-100px) translateX(50px);
+      opacity: 0.5;
+    }
+    50% {
+      transform: translateY(-200px) translateX(-50px);
+      opacity: 0.3;
+    }
+    75% {
+      transform: translateY(-100px) translateX(100px);
+      opacity: 0.5;
+    }
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+  }
+
+  h1 {
+    text-align: center;
+    color: #667eea;
+    margin-bottom: 10px;
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+
+  h2 {
+    text-align: center;
+    color: #764ba2;
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+    margin-top: 10px;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-secondary {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+
+  .btn-success {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+
+  .dialogue-page {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .page-number {
+    position: absolute;
+    top: -15px;
+    left: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .dialogue-entry {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+  }
+
+  .character-label {
+    font-weight: 700;
+    color: #667eea;
+    margin-bottom: 5px;
+  }
+
+  .add-dialogue-btn {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    padding: 10px 20px;
+    font-size: 0.95rem;
+  }
+
+  .scorecard {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin-top: 30px;
+  }
+
+  .scorecard h3 {
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+  }
+
+  .scorecard p {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+  }
+
+  .character-select {
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  .validation-msg {
+    color: #f5576c;
+    font-size: 0.9rem;
+    margin-top: 5px;
+  }
+
+  .setting-display {
+    background: #f0f4ff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-style: italic;
+    color: #667eea;
+    font-weight: 600;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="bg-circles">
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+</div>
+
+<div class="container">
+  <!-- Initial Form -->
+  <div id="initialForm">
+    <h1>SRM Valliammai Engineering College</h1>
+    <h2>Dialogue Builder - Create Your Story</h2>
+
+    <div class="form-group">
+      <label for="studentName">👤 Your Name:</label>
+      <input type="text" id="studentName" placeholder="Enter your name">
+      <div id="nameError" class="validation-msg hidden">Please enter your name</div>
+    </div>
+
+    <div class="form-group">
+      <label for="department">🏫 Department:</label>
+      <select id="department">
+        <option value="">-- Select Department --</option>
+        <option value="Cyber Security">Cyber Security</option>
+        <option value="CSE-1">CSE-1</option>
+        <option value="CSE-2">CSE-2</option>
+        <option value="CSE-3">CSE-3</option>
+        <option value="Mechanical Engineering">Mechanical Engineering</option>
+        <option value="ECE-1">ECE-1</option>
+        <option value="ECE-2">ECE-2</option>
+        <option value="ECE-3">ECE-3</option>
+        <option value="AI DS-1">AI DS-1</option>
+        <option value="AI DS-2">AI DS-2</option>
+        <option value="Civil">Civil</option>
+        <option value="Agri">Agri</option>
+        <option value="EEE">EEE</option>
+        <option value="EIE">EIE</option>
+        <option value="Medical Electronics">Medical Electronics</option>
+        <option value="IT-1">IT-1</option>
+        <option value="IT-2">IT-2</option>
+      </select>
+      <div id="deptError" class="validation-msg hidden">Please select your department</div>
+    </div>
+
+    <div class="form-group">
+      <label for="character1">🎭 First Character Name:</label>
+      <input type="text" id="character1" placeholder="e.g., Sherlock Holmes">
+      <div id="char1Error" class="validation-msg hidden">Please enter first character name</div>
+    </div>
+
+    <div class="form-group">
+      <label for="character2">🎭 Second Character Name:</label>
+      <input type="text" id="character2" placeholder="e.g., Dr. Watson">
+      <div id="char2Error" class="validation-msg hidden">Please enter second character name</div>
+    </div>
+
+    <div class="form-group">
+      <label for="setting">📍 Setting/Place of Conversation:</label>
+      <input type="text" id="setting" placeholder="e.g., A cozy coffee shop in London">
+      <div id="settingError" class="validation-msg hidden">Please enter the setting</div>
+    </div>
+
+    <button onclick="startDialogue()">Begin Writing Dialogue 🚀</button>
+  </div>
+
+  <!-- Dialogue Pages -->
+  <div id="dialogueSection" class="hidden">
+    <h2>📝 Create Your Dialogue</h2>
+    <div class="setting-display" id="settingDisplay"></div>
+    <div id="pagesContainer"></div>
+    <button onclick="addNewPage()">Add New Dialogue Page ➕</button>
+    <button onclick="finishDialogue()" class="btn-secondary">Finish & Submit 🎬</button>
+  </div>
+
+  <!-- Scorecard -->
+  <div id="scorecard" class="hidden scorecard">
+    <h3>📊 Submission Summary</h3>
+    <div id="scorecardContent"></div>
+    <button onclick="downloadPDF()" class="btn-success">Download PDF 📄</button>
+    <button onclick="resetForm()" class="btn-secondary">Create New Dialogue 🔄</button>
+  </div>
+</div>
+
+<script>
+let studentName = "";
+let department = "";
+let character1 = "";
+let character2 = "";
+let setting = "";
+let pages = [];
+let currentPageCount = 0;
+
+function startDialogue() {
+  studentName = document.getElementById("studentName").value.trim();
+  department = document.getElementById("department").value;
+  character1 = document.getElementById("character1").value.trim();
+  character2 = document.getElementById("character2").value.trim();
+  setting = document.getElementById("setting").value.trim();
+
+  let isValid = true;
+
+  if (!studentName) {
+    document.getElementById("nameError").classList.remove("hidden");
+    isValid = false;
+  } else {
+    document.getElementById("nameError").classList.add("hidden");
+  }
+
+  if (!department) {
+    document.getElementById("deptError").classList.remove("hidden");
+    isValid = false;
+  } else {
+    document.getElementById("deptError").classList.add("hidden");
+  }
+
+  if (!character1) {
+    document.getElementById("char1Error").classList.remove("hidden");
+    isValid = false;
+  } else {
+    document.getElementById("char1Error").classList.add("hidden");
+  }
+
+  if (!character2) {
+    document.getElementById("char2Error").classList.remove("hidden");
+    isValid = false;
+  } else {
+    document.getElementById("char2Error").classList.add("hidden");
+  }
+
+  if (!setting) {
+    document.getElementById("settingError").classList.remove("hidden");
+    isValid = false;
+  } else {
+    document.getElementById("settingError").classList.add("hidden");
+  }
+
+  if (!isValid) return;
+
+  document.getElementById("initialForm").classList.add("hidden");
+  document.getElementById("dialogueSection").classList.remove("hidden");
+  document.getElementById("settingDisplay").innerText = `Setting: ${setting}`;
+  
+  addNewPage();
+}
+
+function addNewPage() {
+  currentPageCount++;
+  const pageId = `page-${currentPageCount}`;
+  
+  const pageDiv = document.createElement("div");
+  pageDiv.className = "dialogue-page";
+  pageDiv.id = pageId;
+  pageDiv.innerHTML = `
+    <div class="page-number">Page ${currentPageCount}</div>
+    <div id="${pageId}-dialogues"></div>
+    <button onclick="addDialogue('${pageId}')" class="add-dialogue-btn">Add Dialogue Line ➕</button>
+  `;
+  
+  document.getElementById("pagesContainer").appendChild(pageDiv);
+  
+  pages.push({
+    id: pageId,
+    dialogues: []
+  });
+  
+  addDialogue(pageId);
+}
+
+function addDialogue(pageId) {
+  const page = pages.find(p => p.id === pageId);
+  const dialogueIndex = page.dialogues.length;
+  
+  const dialogueDiv = document.createElement("div");
+  dialogueDiv.className = "dialogue-entry";
+  dialogueDiv.innerHTML = `
+    <div class="character-label">
+      <select class="character-select" id="${pageId}-char-${dialogueIndex}">
+        <option value="${character1}">${character1}</option>
+        <option value="${character2}">${character2}</option>
+      </select>
+    </div>
+    <textarea id="${pageId}-text-${dialogueIndex}" rows="3" placeholder="Enter dialogue..."></textarea>
+  `;
+  
+  document.getElementById(`${pageId}-dialogues`).appendChild(dialogueDiv);
+  
+  page.dialogues.push({
+    character: character1,
+    text: ""
+  });
+}
+
+function finishDialogue() {
+  let allDialogues = [];
+  
+  pages.forEach(page => {
+    page.dialogues.forEach((dialogue, index) => {
+      const charSelect = document.getElementById(`${page.id}-char-${index}`);
+      const textArea = document.getElementById(`${page.id}-text-${index}`);
+      
+      if (charSelect && textArea) {
+        allDialogues.push({
+          page: page.id.split('-')[1],
+          character: charSelect.value,
+          text: textArea.value.trim()
+        });
+      }
+    });
+  });
+
+  const payload = {
+    studentName: studentName,
+    department: department,
+    character1: character1,
+    character2: character2,
+    setting: setting,
+    totalPages: currentPageCount,
+    totalDialogues: allDialogues.length,
+    dialogues: allDialogues
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbxA0lRkERWFt2cYfmm04IQioaG4-21k5VFF5CFKP30zyVaJXM5_27PL3v8JIZEweK3u/exec", {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  showScorecard(allDialogues);
+}
+
+function showScorecard(dialogues) {
+  document.getElementById("dialogueSection").classList.add("hidden");
+  document.getElementById("scorecard").classList.remove("hidden");
+  
+  let content = `
+    <p>👤 <strong>Student:</strong> ${studentName}</p>
+    <p>🏫 <strong>Department:</strong> ${department}</p>
+    <p>🎭 <strong>Characters:</strong> ${character1} & ${character2}</p>
+    <p>📍 <strong>Setting:</strong> ${setting}</p>
+    <p>📄 <strong>Total Pages:</strong> ${currentPageCount}</p>
+    <p>💬 <strong>Total Dialogue Lines:</strong> ${dialogues.length}</p>
+  `;
+  
+  document.getElementById("scorecardContent").innerHTML = content;
+}
+
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 20;
+  let yPos = 20;
+
+  function cleanText(text) {
+    return text.replace(/[^\x20-\x7E]/g, '');
+  }
+
+  doc.setFillColor(102, 126, 234);
+  doc.rect(0, 0, pageWidth, 30, 'F');
+  
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(20);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Dialogue Script', pageWidth / 2, 20, { align: 'center' });
+
+  yPos = 45;
+
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text(`Student: ${cleanText(studentName)}`, margin, yPos);
+  yPos += 7;
+  doc.text(`Department: ${cleanText(department)}`, margin, yPos);
+  yPos += 7;
+  doc.text(`Setting: ${cleanText(setting)}`, margin, yPos);
+  yPos += 15;
+
+  pages.forEach((page, pageIndex) => {
+    if (yPos > pageHeight - 40) {
+      doc.addPage();
+      yPos = 20;
+    }
+
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(102, 126, 234);
+    doc.text(`Page ${pageIndex + 1}`, margin, yPos);
+    yPos += 10;
+
+    page.dialogues.forEach((dialogue, index) => {
+      const charSelect = document.getElementById(`${page.id}-char-${index}`);
+      const textArea = document.getElementById(`${page.id}-text-${index}`);
+      
+      if (charSelect && textArea && textArea.value.trim()) {
+        if (yPos > pageHeight - 30) {
+          doc.addPage();
+          yPos = 20;
+        }
+
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(118, 75, 162);
+        doc.text(`${cleanText(charSelect.value)}:`, margin, yPos);
+        yPos += 6;
+
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(50, 50, 50);
+        const dialogueText = cleanText(textArea.value.trim());
+        const splitText = doc.splitTextToSize(dialogueText, pageWidth - 2 * margin);
+        
+        splitText.forEach(line => {
+          if (yPos > pageHeight - 20) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.text(line, margin + 5, yPos);
+          yPos += 5;
+        });
+        
+        yPos += 5;
+      }
+    });
+
+    yPos += 10;
+  });
+
+  doc.save(`${studentName}_Dialogue_Script.pdf`);
+}
+
+function resetForm() {
+  document.getElementById("scorecard").classList.add("hidden");
+  document.getElementById("initialForm").classList.remove("hidden");
+  
+  document.getElementById("studentName").value = "";
+  document.getElementById("department").value = "";
+  document.getElementById("character1").value = "";
+  document.getElementById("character2").value = "";
+  document.getElementById("setting").value = "";
+  
+  pages = [];
+  currentPageCount = 0;
+  document.getElementById("pagesContainer").innerHTML = "";
+}
+</script>
+</body>
+</html>
