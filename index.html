@@ -201,6 +201,18 @@
     color: #667eea;
   }
 
+  .paste-counter {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 15px 20px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f5576c;
+  }
+
   .progress-bar {
     background: rgba(255, 255, 255, 0.95);
     padding: 15px 20px;
@@ -456,6 +468,8 @@
     
     <div class="timer-display" id="timerDisplay">⏱️ Time: 0m 0s</div>
     
+    <div class="paste-counter" id="pasteCounter">🚫 Copy/Paste Attempts: 0</div>
+    
     <div class="progress-bar">
       <div class="progress-text" id="progressText">Completed: 0 of 20 required dialogues</div>
       <div class="progress-track">
@@ -495,6 +509,54 @@ let dialogueCount = 0;
 const MIN_DIALOGUES = 20;
 let startTime = 0;
 let timerInterval = null;
+let pasteAttempts = 0;
+
+// Disable all copy/paste/cut operations globally
+document.addEventListener('copy', function(e) {
+  e.preventDefault();
+  pasteAttempts++;
+  updatePasteCounter();
+  return false;
+});
+
+document.addEventListener('paste', function(e) {
+  e.preventDefault();
+  pasteAttempts++;
+  updatePasteCounter();
+  return false;
+});
+
+document.addEventListener('cut', function(e) {
+  e.preventDefault();
+  pasteAttempts++;
+  updatePasteCounter();
+  return false;
+});
+
+// Disable context menu (right-click)
+document.addEventListener('contextmenu', function(e) {
+  e.preventDefault();
+  return false;
+});
+
+// Disable keyboard shortcuts for copy/paste/cut
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x' || e.key === 'a')) {
+    e.preventDefault();
+    if (e.key === 'v' || e.key === 'c' || e.key === 'x') {
+      pasteAttempts++;
+      updatePasteCounter();
+    }
+    return false;
+  }
+});
+
+function updatePasteCounter() {
+  const counter = document.getElementById("pasteCounter");
+  if (counter) {
+    counter.innerText = `🚫 Copy/Paste Attempts: ${pasteAttempts}`;
+  }
+}
 
 function startDialogue() {
   studentName = document.getElementById("studentName").value.trim();
@@ -573,12 +635,59 @@ function addDialogueBox(index) {
       class="dialogue-textarea" 
       id="dialogue-${index}" 
       placeholder="Enter ${character}'s dialogue..."
-      oninput="autoResize(this); updateProgress();"
+      oninput="handleTextInput(this, event); autoResize(this); updateProgress();"
+      onpaste="return false;"
+      oncopy="return false;"
+      oncut="return false;"
+      ondrop="return false;"
+      autocomplete="off"
+      spellcheck="false"
     ></textarea>
   `;
   
   container.appendChild(dialogueBox);
   dialogueCount++;
+  
+  // Add additional paste prevention on the textarea itself
+  const textarea = document.getElementById(`dialogue-${index}`);
+  textarea.addEventListener('paste', function(e) {
+    e.preventDefault();
+    pasteAttempts++;
+    updatePasteCounter();
+    return false;
+  });
+}
+
+function handleTextInput(textarea, event) {
+  // Check if input length is suspiciously long (more than 10 characters at once)
+  if (event && event.inputType === 'insertFromPaste') {
+    event.preventDefault();
+    pasteAttempts++;
+    updatePasteCounter();
+    textarea.value = textarea.value.substring(0, textarea.value.length - 10);
+    return false;
+  }
+  
+  // Additional check for rapid text input
+  const currentValue = textarea.value;
+  if (!textarea.lastValue) {
+    textarea.lastValue = '';
+    textarea.lastInputTime = Date.now();
+  }
+  
+  const inputDiff = currentValue.length - textarea.lastValue.length;
+  const timeDiff = Date.now() - textarea.lastInputTime;
+  
+  // If more than 10 characters added in less than 100ms, likely paste
+  if (inputDiff > 10 && timeDiff < 100) {
+    pasteAttempts++;
+    updatePasteCounter();
+    textarea.value = textarea.lastValue;
+    return false;
+  }
+  
+  textarea.lastValue = currentValue;
+  textarea.lastInputTime = Date.now();
 }
 
 function autoResize(textarea) {
@@ -684,7 +793,8 @@ function finishDialogue() {
     totalTime: totalTimeSeconds,
     department: department,
     highestStreak: "IPA 51",
-    answers: [dialogueTexts]
+    answers: [dialogueTexts],
+    pasteAttempts: pasteAttempts
   };
 
   fetch("https://script.google.com/macros/s/AKfycbxA0lRkERWFt2cYfmm04IQioaG4-21k5VFF5CFKP30zyVaJXM5_27PL3v8JIZEweK3u/exec", {
@@ -711,6 +821,7 @@ function showScorecard(dialogues, totalTimeSeconds) {
     <p>📍 <strong>Setting:</strong> ${setting}</p>
     <p>💬 <strong>Total Dialogue Lines:</strong> ${dialogues.length}</p>
     <p>⏱️ <strong>Time Taken:</strong> ${minutes}m ${seconds}s</p>
+    <p>🚫 <strong>Copy/Paste Attempts:</strong> ${pasteAttempts}</p>
     <p>✅ <strong>Status:</strong> Successfully submitted!</p>
   `;
   
@@ -829,6 +940,7 @@ function resetForm() {
   
   dialogueCount = 0;
   startTime = 0;
+  pasteAttempts = 0;
   document.getElementById("dialogueContainer").innerHTML = "";
   
   window.scrollTo({ top: 0, behavior: 'smooth' });
