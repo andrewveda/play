@@ -16,12 +16,10 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    padding: 20px;
     position: relative;
     overflow-x: hidden;
   }
 
-  /* Floating circles animation */
   .bg-circles {
     position: fixed;
     top: 0;
@@ -85,15 +83,20 @@
   }
 
   .container {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .form-container {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
     padding: 40px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    position: relative;
-    z-index: 1;
     backdrop-filter: blur(10px);
+    margin-bottom: 20px;
   }
 
   h1 {
@@ -124,7 +127,7 @@
     font-size: 1.1rem;
   }
 
-  input, select, textarea {
+  input, select {
     width: 100%;
     padding: 12px 16px;
     border: 2px solid #e0e0e0;
@@ -134,7 +137,7 @@
     background: white;
   }
 
-  input:focus, select:focus, textarea:focus {
+  input:focus, select:focus {
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -173,69 +176,166 @@
     background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   }
 
-  .dialogue-page {
-    background: white;
-    border: 2px solid #e0e0e0;
+  .setting-display {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
     border-radius: 15px;
-    padding: 30px;
-    margin-bottom: 30px;
-    position: relative;
+    margin-bottom: 10px;
+    text-align: center;
+    font-style: italic;
+    color: #667eea;
+    font-weight: 600;
+    font-size: 1.2rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   }
 
-  .page-number {
+  .progress-bar {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 15px 20px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .progress-text {
+    color: #667eea;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .progress-track {
+    background: #e0e0e0;
+    height: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    height: 100%;
+    transition: width 0.3s ease;
+    border-radius: 10px;
+  }
+
+  .dialogue-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .dialogue-box {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 5px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+
+  .dialogue-box.left {
+    margin-right: 100px;
+  }
+
+  .dialogue-box.right {
+    margin-left: 100px;
+  }
+
+  .dialogue-number {
     position: absolute;
-    top: -15px;
+    top: -12px;
     left: 20px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 5px 15px;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .character-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px 10px 20px;
+    gap: 10px;
+  }
+
+  .character-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 16px;
     border-radius: 20px;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 
-  .dialogue-entry {
-    margin-bottom: 20px;
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 10px;
-    border-left: 4px solid #667eea;
+  .character-badge.char2 {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   }
 
-  .character-label {
-    font-weight: 700;
-    color: #667eea;
-    margin-bottom: 5px;
+  .dialogue-textarea {
+    width: 100%;
+    border: none;
+    padding: 10px 20px 20px 20px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    resize: none;
+    overflow: hidden;
+    background: transparent;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    min-height: 80px;
   }
 
-  .add-dialogue-btn {
+  .dialogue-textarea:focus {
+    outline: none;
+  }
+
+  .dialogue-textarea::placeholder {
+    color: #999;
+    font-style: italic;
+  }
+
+  .add-more-btn {
     background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-    padding: 10px 20px;
-    font-size: 0.95rem;
+    width: 100%;
+    margin-top: 10px;
+    padding: 16px;
+    font-size: 1.1rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .action-buttons button {
+    flex: 1;
   }
 
   .scorecard {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 30px;
-    border-radius: 15px;
-    margin-top: 30px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 40px;
+    border-radius: 20px;
+    margin-top: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   }
 
   .scorecard h3 {
     margin-bottom: 20px;
     font-size: 1.8rem;
+    color: #667eea;
+    text-align: center;
   }
 
   .scorecard p {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-size: 1.1rem;
-  }
-
-  .character-select {
-    display: inline-block;
-    margin-right: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
   }
 
   .validation-msg {
@@ -244,23 +344,16 @@
     margin-top: 5px;
   }
 
-  .setting-display {
-    background: #f0f4ff;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    text-align: center;
-    font-style: italic;
-    color: #667eea;
-    font-weight: 600;
-  }
-
   .hidden {
     display: none;
   }
 
   @media (max-width: 768px) {
     .container {
+      padding: 5px;
+    }
+
+    .form-container {
       padding: 20px;
     }
 
@@ -270,6 +363,12 @@
 
     h2 {
       font-size: 1.2rem;
+    }
+
+    .dialogue-box.left,
+    .dialogue-box.right {
+      margin-left: 0;
+      margin-right: 0;
     }
   }
 </style>
@@ -283,7 +382,7 @@
 
 <div class="container">
   <!-- Initial Form -->
-  <div id="initialForm">
+  <div id="initialForm" class="form-container">
     <h1>SRM Valliammai Engineering College</h1>
     <h2>Dialogue Builder - Create Your Story</h2>
 
@@ -339,21 +438,36 @@
     <button onclick="startDialogue()">Begin Writing Dialogue 🚀</button>
   </div>
 
-  <!-- Dialogue Pages -->
+  <!-- Dialogue Section -->
   <div id="dialogueSection" class="hidden">
-    <h2>📝 Create Your Dialogue</h2>
     <div class="setting-display" id="settingDisplay"></div>
-    <div id="pagesContainer"></div>
-    <button onclick="addNewPage()">Add New Dialogue Page ➕</button>
-    <button onclick="finishDialogue()" class="btn-secondary">Finish & Submit 🎬</button>
+    
+    <div class="progress-bar">
+      <div class="progress-text" id="progressText">Completed: 0 of 10 required dialogues</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="dialogue-container" id="dialogueContainer"></div>
+
+    <button onclick="addMoreDialogue()" class="add-more-btn">Add More Dialogue ➕</button>
+
+    <div class="action-buttons">
+      <button onclick="finishDialogue()">Finish & Submit 🎬</button>
+    </div>
+
+    <div id="submitError" class="validation-msg hidden" style="text-align: center; margin-top: 10px; font-size: 1rem;"></div>
   </div>
 
   <!-- Scorecard -->
   <div id="scorecard" class="hidden scorecard">
     <h3>📊 Submission Summary</h3>
     <div id="scorecardContent"></div>
-    <button onclick="downloadPDF()" class="btn-success">Download PDF 📄</button>
-    <button onclick="resetForm()" class="btn-secondary">Create New Dialogue 🔄</button>
+    <div class="action-buttons">
+      <button onclick="downloadPDF()" class="btn-success">Download PDF 📄</button>
+      <button onclick="resetForm()" class="btn-secondary">Create New Dialogue 🔄</button>
+    </div>
   </div>
 </div>
 
@@ -363,8 +477,8 @@ let department = "";
 let character1 = "";
 let character2 = "";
 let setting = "";
-let pages = [];
-let currentPageCount = 0;
+let dialogueCount = 0;
+const MIN_DIALOGUES = 10;
 
 function startDialogue() {
   studentName = document.getElementById("studentName").value.trim();
@@ -414,75 +528,114 @@ function startDialogue() {
 
   document.getElementById("initialForm").classList.add("hidden");
   document.getElementById("dialogueSection").classList.remove("hidden");
-  document.getElementById("settingDisplay").innerText = `Setting: ${setting}`;
+  document.getElementById("settingDisplay").innerText = `📍 Setting: ${setting}`;
   
-  addNewPage();
+  for (let i = 0; i < MIN_DIALOGUES; i++) {
+    addDialogueBox(i);
+  }
+  
+  updateProgress();
 }
 
-function addNewPage() {
-  currentPageCount++;
-  const pageId = `page-${currentPageCount}`;
+function addDialogueBox(index) {
+  const container = document.getElementById("dialogueContainer");
+  const isLeft = index % 2 === 0;
+  const character = isLeft ? character1 : character2;
+  const charClass = isLeft ? 'char1' : 'char2';
   
-  const pageDiv = document.createElement("div");
-  pageDiv.className = "dialogue-page";
-  pageDiv.id = pageId;
-  pageDiv.innerHTML = `
-    <div class="page-number">Page ${currentPageCount}</div>
-    <div id="${pageId}-dialogues"></div>
-    <button onclick="addDialogue('${pageId}')" class="add-dialogue-btn">Add Dialogue Line ➕</button>
-  `;
-  
-  document.getElementById("pagesContainer").appendChild(pageDiv);
-  
-  pages.push({
-    id: pageId,
-    dialogues: []
-  });
-  
-  addDialogue(pageId);
-}
-
-function addDialogue(pageId) {
-  const page = pages.find(p => p.id === pageId);
-  const dialogueIndex = page.dialogues.length;
-  
-  const dialogueDiv = document.createElement("div");
-  dialogueDiv.className = "dialogue-entry";
-  dialogueDiv.innerHTML = `
-    <div class="character-label">
-      <select class="character-select" id="${pageId}-char-${dialogueIndex}">
-        <option value="${character1}">${character1}</option>
-        <option value="${character2}">${character2}</option>
-      </select>
+  const dialogueBox = document.createElement("div");
+  dialogueBox.className = `dialogue-box ${isLeft ? 'left' : 'right'}`;
+  dialogueBox.innerHTML = `
+    <div class="dialogue-number">Dialogue ${index + 1}</div>
+    <div class="character-header">
+      <div class="character-badge ${charClass}">${character}</div>
     </div>
-    <textarea id="${pageId}-text-${dialogueIndex}" rows="3" placeholder="Enter dialogue..."></textarea>
+    <textarea 
+      class="dialogue-textarea" 
+      id="dialogue-${index}" 
+      placeholder="Enter ${character}'s dialogue..."
+      oninput="autoResize(this); updateProgress();"
+    ></textarea>
   `;
   
-  document.getElementById(`${pageId}-dialogues`).appendChild(dialogueDiv);
+  container.appendChild(dialogueBox);
+  dialogueCount++;
+}
+
+function autoResize(textarea) {
+  textarea.style.height = 'auto';
+  textarea.style.height = Math.max(80, textarea.scrollHeight) + 'px';
+}
+
+function addMoreDialogue() {
+  addDialogueBox(dialogueCount);
+  updateProgress();
   
-  page.dialogues.push({
-    character: character1,
-    text: ""
-  });
+  setTimeout(() => {
+    const newDialogue = document.getElementById(`dialogue-${dialogueCount - 1}`);
+    newDialogue.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    newDialogue.focus();
+  }, 100);
+}
+
+function updateProgress() {
+  let filledCount = 0;
+  for (let i = 0; i < dialogueCount; i++) {
+    const textarea = document.getElementById(`dialogue-${i}`);
+    if (textarea && textarea.value.trim()) {
+      filledCount++;
+    }
+  }
+  
+  const requiredFilled = Math.min(filledCount, MIN_DIALOGUES);
+  const percentage = (requiredFilled / MIN_DIALOGUES) * 100;
+  
+  document.getElementById("progressFill").style.width = percentage + "%";
+  document.getElementById("progressText").innerText = 
+    `Completed: ${requiredFilled} of ${MIN_DIALOGUES} required dialogues` +
+    (filledCount > MIN_DIALOGUES ? ` (+${filledCount - MIN_DIALOGUES} extra)` : '');
 }
 
 function finishDialogue() {
   let allDialogues = [];
+  let emptyCount = 0;
   
-  pages.forEach(page => {
-    page.dialogues.forEach((dialogue, index) => {
-      const charSelect = document.getElementById(`${page.id}-char-${index}`);
-      const textArea = document.getElementById(`${page.id}-text-${index}`);
-      
-      if (charSelect && textArea) {
-        allDialogues.push({
-          page: page.id.split('-')[1],
-          character: charSelect.value,
-          text: textArea.value.trim()
-        });
+  for (let i = 0; i < Math.min(dialogueCount, MIN_DIALOGUES); i++) {
+    const textarea = document.getElementById(`dialogue-${i}`);
+    if (!textarea.value.trim()) {
+      emptyCount++;
+    }
+  }
+  
+  if (emptyCount > 0) {
+    document.getElementById("submitError").classList.remove("hidden");
+    document.getElementById("submitError").innerText = 
+      `⚠️ Please complete all ${MIN_DIALOGUES} required dialogues. ${emptyCount} dialogue(s) are empty.`;
+    
+    for (let i = 0; i < dialogueCount; i++) {
+      const textarea = document.getElementById(`dialogue-${i}`);
+      if (!textarea.value.trim()) {
+        textarea.style.border = "2px solid #f5576c";
+      } else {
+        textarea.style.border = "none";
       }
-    });
-  });
+    }
+    return;
+  }
+  
+  document.getElementById("submitError").classList.add("hidden");
+  
+  for (let i = 0; i < dialogueCount; i++) {
+    const textarea = document.getElementById(`dialogue-${i}`);
+    if (textarea && textarea.value.trim()) {
+      const isChar1 = i % 2 === 0;
+      allDialogues.push({
+        number: i + 1,
+        character: isChar1 ? character1 : character2,
+        text: textarea.value.trim()
+      });
+    }
+  }
 
   const payload = {
     studentName: studentName,
@@ -490,7 +643,6 @@ function finishDialogue() {
     character1: character1,
     character2: character2,
     setting: setting,
-    totalPages: currentPageCount,
     totalDialogues: allDialogues.length,
     dialogues: allDialogues
   };
@@ -514,11 +666,12 @@ function showScorecard(dialogues) {
     <p>🏫 <strong>Department:</strong> ${department}</p>
     <p>🎭 <strong>Characters:</strong> ${character1} & ${character2}</p>
     <p>📍 <strong>Setting:</strong> ${setting}</p>
-    <p>📄 <strong>Total Pages:</strong> ${currentPageCount}</p>
     <p>💬 <strong>Total Dialogue Lines:</strong> ${dialogues.length}</p>
+    <p>✅ <strong>Status:</strong> Successfully submitted!</p>
   `;
   
   document.getElementById("scorecardContent").innerHTML = content;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function downloadPDF() {
@@ -527,81 +680,94 @@ function downloadPDF() {
   
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 20;
+  const margin = 15;
   let yPos = 20;
 
   function cleanText(text) {
     return text.replace(/[^\x20-\x7E]/g, '');
   }
 
+  function addNewPageIfNeeded(requiredSpace) {
+    if (yPos + requiredSpace > pageHeight - 20) {
+      doc.addPage();
+      yPos = 20;
+      return true;
+    }
+    return false;
+  }
+
   doc.setFillColor(102, 126, 234);
-  doc.rect(0, 0, pageWidth, 30, 'F');
+  doc.rect(0, 0, pageWidth, 35, 'F');
   
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(20);
+  doc.setFontSize(22);
   doc.setFont('helvetica', 'bold');
-  doc.text('Dialogue Script', pageWidth / 2, 20, { align: 'center' });
+  doc.text('Dialogue Script', pageWidth / 2, 22, { align: 'center' });
 
-  yPos = 45;
+  yPos = 50;
 
   doc.setTextColor(0, 0, 0);
-  doc.setFontSize(12);
+  doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
   doc.text(`Student: ${cleanText(studentName)}`, margin, yPos);
-  yPos += 7;
+  yPos += 6;
   doc.text(`Department: ${cleanText(department)}`, margin, yPos);
-  yPos += 7;
+  yPos += 6;
+  doc.text(`Characters: ${cleanText(character1)} & ${cleanText(character2)}`, margin, yPos);
+  yPos += 6;
+  doc.setFont('helvetica', 'italic');
   doc.text(`Setting: ${cleanText(setting)}`, margin, yPos);
   yPos += 15;
 
-  pages.forEach((page, pageIndex) => {
-    if (yPos > pageHeight - 40) {
-      doc.addPage();
-      yPos = 20;
-    }
+  doc.setDrawColor(102, 126, 234);
+  doc.line(margin, yPos, pageWidth - margin, yPos);
+  yPos += 10;
 
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(102, 126, 234);
-    doc.text(`Page ${pageIndex + 1}`, margin, yPos);
-    yPos += 10;
-
-    page.dialogues.forEach((dialogue, index) => {
-      const charSelect = document.getElementById(`${page.id}-char-${index}`);
-      const textArea = document.getElementById(`${page.id}-text-${index}`);
+  for (let i = 0; i < dialogueCount; i++) {
+    const textarea = document.getElementById(`dialogue-${i}`);
+    if (textarea && textarea.value.trim()) {
+      const isChar1 = i % 2 === 0;
+      const character = isChar1 ? character1 : character2;
+      const dialogueText = cleanText(textarea.value.trim());
       
-      if (charSelect && textArea && textArea.value.trim()) {
-        if (yPos > pageHeight - 30) {
-          doc.addPage();
-          yPos = 20;
+      addNewPageIfNeeded(30);
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(isChar1 ? 102 : 240, isChar1 ? 126 : 147, isChar1 ? 234 : 108);
+      doc.text(`${character}:`, margin, yPos);
+      yPos += 6;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(50, 50, 50);
+      const splitText = doc.splitTextToSize(dialogueText, pageWidth - 2 * margin - 5);
+      
+      splitText.forEach(line => {
+        if (addNewPageIfNeeded(6)) {
+          // Character name repeated on new page
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(isChar1 ? 102 : 240, isChar1 ? 126 : 147, isChar1 ? 234 : 108);
+          doc.text(`${character} (cont.):`, margin, yPos);
+          yPos += 6;
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(50, 50, 50);
         }
-
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(118, 75, 162);
-        doc.text(`${cleanText(charSelect.value)}:`, margin, yPos);
-        yPos += 6;
-
-        doc.setFont('helvetica', 'normal');
-        doc.setTextColor(50, 50, 50);
-        const dialogueText = cleanText(textArea.value.trim());
-        const splitText = doc.splitTextToSize(dialogueText, pageWidth - 2 * margin);
-        
-        splitText.forEach(line => {
-          if (yPos > pageHeight - 20) {
-            doc.addPage();
-            yPos = 20;
-          }
-          doc.text(line, margin + 5, yPos);
-          yPos += 5;
-        });
-        
+        doc.text(line, margin + 5, yPos);
         yPos += 5;
-      }
-    });
+      });
+      
+      yPos += 8;
+    }
+  }
 
-    yPos += 10;
-  });
+  yPos = pageHeight - 15;
+  doc.setFillColor(102, 126, 234);
+  doc.rect(0, yPos, pageWidth, 15, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'italic');
+  doc.text('Created with Dialogue Builder - SRM Valliammai Engineering College', pageWidth / 2, yPos + 10, { align: 'center' });
 
   doc.save(`${studentName}_Dialogue_Script.pdf`);
 }
@@ -616,9 +782,10 @@ function resetForm() {
   document.getElementById("character2").value = "";
   document.getElementById("setting").value = "";
   
-  pages = [];
-  currentPageCount = 0;
-  document.getElementById("pagesContainer").innerHTML = "";
+  dialogueCount = 0;
+  document.getElementById("dialogueContainer").innerHTML = "";
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 </body>
