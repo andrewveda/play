@@ -189,6 +189,18 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   }
 
+  .timer-display {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 15px 20px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #667eea;
+  }
+
   .progress-bar {
     background: rgba(255, 255, 255, 0.95);
     padding: 15px 20px;
@@ -442,8 +454,10 @@
   <div id="dialogueSection" class="hidden">
     <div class="setting-display" id="settingDisplay"></div>
     
+    <div class="timer-display" id="timerDisplay">⏱️ Time: 0m 0s</div>
+    
     <div class="progress-bar">
-      <div class="progress-text" id="progressText">Completed: 0 of 10 required dialogues</div>
+      <div class="progress-text" id="progressText">Completed: 0 of 20 required dialogues</div>
       <div class="progress-track">
         <div class="progress-fill" id="progressFill" style="width: 0%"></div>
       </div>
@@ -478,7 +492,9 @@ let character1 = "";
 let character2 = "";
 let setting = "";
 let dialogueCount = 0;
-const MIN_DIALOGUES = 10;
+const MIN_DIALOGUES = 20;
+let startTime = 0;
+let timerInterval = null;
 
 function startDialogue() {
   studentName = document.getElementById("studentName").value.trim();
@@ -530,6 +546,9 @@ function startDialogue() {
   document.getElementById("dialogueSection").classList.remove("hidden");
   document.getElementById("settingDisplay").innerText = `📍 Setting: ${setting}`;
   
+  startTime = Date.now();
+  startTimer();
+  
   for (let i = 0; i < MIN_DIALOGUES; i++) {
     addDialogueBox(i);
   }
@@ -565,6 +584,22 @@ function addDialogueBox(index) {
 function autoResize(textarea) {
   textarea.style.height = 'auto';
   textarea.style.height = Math.max(80, textarea.scrollHeight) + 'px';
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    const minutes = Math.floor(elapsed / 60);
+    const seconds = elapsed % 60;
+    document.getElementById("timerDisplay").innerText = `⏱️ Time: ${minutes}m ${seconds}s`;
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
 }
 
 function addMoreDialogue() {
@@ -623,6 +658,9 @@ function finishDialogue() {
     return;
   }
   
+  stopTimer();
+  const totalTimeSeconds = Math.floor((Date.now() - startTime) / 1000);
+  
   document.getElementById("submitError").classList.add("hidden");
   
   for (let i = 0; i < dialogueCount; i++) {
@@ -637,14 +675,16 @@ function finishDialogue() {
     }
   }
 
+  const dialogueTexts = allDialogues.map(d => `${d.character}: ${d.text}`).join(" | ");
+
   const payload = {
     studentName: studentName,
+    correctCount: 25,
+    totalWrongGuesses: 0,
+    totalTime: totalTimeSeconds,
     department: department,
-    character1: character1,
-    character2: character2,
-    setting: setting,
-    totalDialogues: allDialogues.length,
-    dialogues: allDialogues
+    highestStreak: "IPA 51",
+    answers: [dialogueTexts]
   };
 
   fetch("https://script.google.com/macros/s/AKfycbxA0lRkERWFt2cYfmm04IQioaG4-21k5VFF5CFKP30zyVaJXM5_27PL3v8JIZEweK3u/exec", {
@@ -654,12 +694,15 @@ function finishDialogue() {
     body: JSON.stringify(payload)
   });
 
-  showScorecard(allDialogues);
+  showScorecard(allDialogues, totalTimeSeconds);
 }
 
-function showScorecard(dialogues) {
+function showScorecard(dialogues, totalTimeSeconds) {
   document.getElementById("dialogueSection").classList.add("hidden");
   document.getElementById("scorecard").classList.remove("hidden");
+  
+  const minutes = Math.floor(totalTimeSeconds / 60);
+  const seconds = totalTimeSeconds % 60;
   
   let content = `
     <p>👤 <strong>Student:</strong> ${studentName}</p>
@@ -667,6 +710,7 @@ function showScorecard(dialogues) {
     <p>🎭 <strong>Characters:</strong> ${character1} & ${character2}</p>
     <p>📍 <strong>Setting:</strong> ${setting}</p>
     <p>💬 <strong>Total Dialogue Lines:</strong> ${dialogues.length}</p>
+    <p>⏱️ <strong>Time Taken:</strong> ${minutes}m ${seconds}s</p>
     <p>✅ <strong>Status:</strong> Successfully submitted!</p>
   `;
   
@@ -773,6 +817,7 @@ function downloadPDF() {
 }
 
 function resetForm() {
+  stopTimer();
   document.getElementById("scorecard").classList.add("hidden");
   document.getElementById("initialForm").classList.remove("hidden");
   
@@ -783,6 +828,7 @@ function resetForm() {
   document.getElementById("setting").value = "";
   
   dialogueCount = 0;
+  startTime = 0;
   document.getElementById("dialogueContainer").innerHTML = "";
   
   window.scrollTo({ top: 0, behavior: 'smooth' });
